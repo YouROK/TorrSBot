@@ -34,6 +34,9 @@ func main() {
 	}
 
 	b.Handle("help", help)
+	b.Handle("Help", help)
+	b.Handle("/help", help)
+	b.Handle("/Help", help)
 	b.Handle("/start", help)
 
 	b.Handle(tele.OnText, func(c tele.Context) error {
