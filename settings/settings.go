@@ -54,7 +54,7 @@ func get[T any](name string, def T) T {
 
 func getJson() (map[string]interface{}, error) {
 	dir := filepath.Dir(os.Args[0])
-	buf, err := ioutil.ReadFile(filepath.Join(dir, "gv.cfg"))
+	buf, err := os.ReadFile(filepath.Join(dir, "gv.cfg"))
 	if err != nil {
 		return nil, err
 	}
