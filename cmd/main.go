@@ -133,7 +133,7 @@ func infoTorrent(c tele.Context, magnet string) error {
 	for _, f := range ti.FileStats {
 		btn := filesKbd.Data(filepath.Base(f.Path)+" "+humanize.Bytes(uint64(f.Length)), "file", ti.Hash, strconv.Itoa(f.Id))
 		files = append(files, filesKbd.Row(btn))
-		if i+len(txt) > 4096 {
+		if i+len(txt) > 1024 {
 			filesKbd := &tele.ReplyMarkup{}
 			filesKbd.Inline(files...)
 			c.Send(txt, filesKbd)
