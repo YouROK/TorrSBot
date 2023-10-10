@@ -3,7 +3,6 @@ package main
 import (
 	"GetVideo/rutor"
 	"GetVideo/settings"
-	"GetVideo/torlook"
 	"GetVideo/torr"
 	"GetVideo/utils"
 	"errors"
@@ -13,6 +12,7 @@ import (
 	"log"
 	"net/url"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -83,11 +83,8 @@ func help(c tele.Context) error {
 func findTorrents(c tele.Context, query string) error {
 	list, err := rutor.ParsePage(query)
 	if err != nil {
-		list, err = torlook.ParsePage(query)
-		if err != nil {
-			c.Send(err.Error())
-			return err
-		}
+		c.Send(err.Error())
+		return err
 	}
 
 	if len(list) == 0 {
@@ -95,8 +92,17 @@ func findTorrents(c tele.Context, query string) error {
 		return nil
 	}
 
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Peer < list[j].Peer
+	})
+
 	for _, d := range list {
-		txt := fmt.Sprintf("<b>%v</b>\n%v <b>%v</b> ↑%v ↓%v %v", d.Title, d.Date.Format("01.02.2006"), d.Size, d.Peer, d.Seed, d.Tracker)
+		link := d.Link
+		u, err := url.Parse(d.Link)
+		if err == nil {
+			link = u.String()
+		}
+		txt := fmt.Sprintf("<b>%v</b>\n%v <b>%v</b> ↑%v ↓%v <a href=\"%v\">ссылка</a>", d.Title, d.Date.Format("01.02.2006"), d.Size, d.Peer, d.Seed, link)
 		mag, err := url.Parse(d.Magnet)
 		if err != nil {
 			fmt.Println("Ошибка в магнет ссылке:", d.Magnet, err)
@@ -109,8 +115,7 @@ func findTorrents(c tele.Context, query string) error {
 		}
 		torrKbd := &tele.ReplyMarkup{}
 		btnDwn := torrKbd.Data("Загрузить", "torr", arr[2])
-		btnLnk := torrKbd.URL("Ссылка", d.Link)
-		rows := []tele.Row{torrKbd.Row(btnDwn), torrKbd.Row(btnLnk)}
+		rows := []tele.Row{torrKbd.Row(btnDwn)}
 		torrKbd.Inline(rows...)
 		c.Send(txt, torrKbd)
 	}
