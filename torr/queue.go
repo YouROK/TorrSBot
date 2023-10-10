@@ -203,6 +203,7 @@ type SendFile struct {
 	*os.File
 	dl     *DLQueue
 	offset int
+	tmp    string
 }
 
 func newSFile(path string, dlQueue *DLQueue) *SendFile {
@@ -218,11 +219,15 @@ func newSFile(path string, dlQueue *DLQueue) *SendFile {
 
 func (s *SendFile) Read(p []byte) (n int, err error) {
 	n, err = s.File.Read(p)
+	tmp := humanize.Bytes(uint64(s.offset))
 	if err == nil {
 		s.offset += n
-		s.dl.c.Bot().Edit(s.dl.updateMsg, "Загрузка в телеграм:\n"+
-			"<b>Загружено: </b>"+humanize.Bytes(uint64(s.offset)),
-		)
+		if s.tmp != tmp {
+			s.tmp = tmp
+			s.dl.c.Bot().Edit(s.dl.updateMsg, "Загрузка в телеграм:\n"+
+				"<b>Загружено: </b>"+s.tmp,
+			)
+		}
 	}
 	return
 }
