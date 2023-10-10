@@ -60,7 +60,7 @@ func DownloadTorrentFile(dir, hash, id string) (string, error) {
 	}
 
 	if fst.Length > 2*1024*1024*1024 {
-		return "", errors.New("file size is bigger")
+		return "", errors.New("Размер файла должен быть меньше 2Gb")
 	}
 
 	ext := filepath.Ext(fst.Path)
