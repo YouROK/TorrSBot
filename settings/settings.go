@@ -14,7 +14,6 @@ func init() {
 		js["TGBotApi"] = ""
 		js["HostTG"] = "http://127.0.0.1:8081"
 		js["HostTS"] = "http://127.0.0.1:8090"
-		js["ContentDir"] = "/tmp"
 
 		dir := filepath.Dir(os.Args[0])
 		buf, err := json.MarshalIndent(js, "", " ")
@@ -34,10 +33,6 @@ func GetTGHost() string {
 
 func GetTSHost() string {
 	return get("HostTS", "http://127.0.0.1:8090")
-}
-
-func GetDownloadDir() string {
-	return get("ContentDir", "/tmp")
 }
 
 func get[T any](name string, def T) T {
