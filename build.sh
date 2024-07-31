@@ -6,7 +6,7 @@ type setopt >/dev/null 2>&1
 
 SCRIPT_NAME=`basename "$0"`
 FAILURES=""
-SOURCE_FILE="dist/tgbot"
+SOURCE_FILE="dist/torrsbot"
 CURRENT_DIRECTORY=${PWD##*/}
 OUTPUT=${SOURCE_FILE:-$CURRENT_DIRECTORY}
 LDFLAGS="-s -w"

@@ -81,6 +81,7 @@ func help(c tele.Context) error {
 }
 
 func findTorrents(c tele.Context, query string) error {
+	c.Notify(tele.Typing)
 	list, err := rutor.ParsePage(query)
 	if err != nil {
 		c.Send(err.Error())
@@ -118,16 +119,22 @@ func findTorrents(c tele.Context, query string) error {
 		rows := []tele.Row{torrKbd.Row(btnDwn)}
 		torrKbd.Inline(rows...)
 		c.Send(txt, torrKbd)
+		c.Notify(tele.Typing)
 	}
 
 	return nil
 }
 
 func infoTorrent(c tele.Context, magnet string) error {
+	msg, _ := c.Bot().Send(c.Recipient(), "Подключение к торренту: <code>"+magnet+"</code>")
 	ti, err := torr.GetTorrentInfo(magnet)
 	if err != nil {
-		return c.Send(err.Error())
+		_, err = c.Bot().Edit(msg, "Ошибка при подключении к торренту <code>"+magnet+"</code>")
+		return err
 	}
+
+	c.Bot().Delete(msg)
+
 	txt := "<b>" + ti.Title + "</b>\n" +
 		"<code>" + ti.Hash + "</code>"
 

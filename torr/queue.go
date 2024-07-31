@@ -100,6 +100,8 @@ func work() {
 			file = ti.FindFile(id)
 		}
 
+		dlQueue.c.Bot().Notify(dlQueue.c.Recipient(), tele.UploadingVideo)
+
 		ext := strings.ToLower(filepath.Ext(file.Path))
 		caption := filepath.Base(file.Path)
 		torrFile, err := newTFile(dlQueue)
@@ -133,7 +135,8 @@ func work() {
 			err = dlQueue.c.Send(d)
 		}
 		if err != nil {
-			errstr := fmt.Sprintf("Ошибка загрузки в телеграм: %v %v", file.Path, err)
+			fmt.Println("Ошибка загрузки в телеграм:", err)
+			errstr := fmt.Sprintf("Ошибка загрузки в телеграм: %v", file.Path)
 			dlQueue.c.Bot().Edit(dlQueue.updateMsg, errstr)
 			return
 		}
